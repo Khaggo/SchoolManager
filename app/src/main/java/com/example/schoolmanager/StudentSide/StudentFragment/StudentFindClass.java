@@ -25,8 +25,12 @@ import com.example.schoolmanager.StudentSide.StudentActivity.ClassCheckoutActivi
 import com.example.schoolmanager.StudentSide.StudentEnrollment;
 import com.example.schoolmanager.StudentSide.StudentMainActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class StudentFindClass extends Fragment {
@@ -60,35 +64,60 @@ public class StudentFindClass extends Fragment {
                 (ClassList classListChosen) -> {
                     ClassList chosen = MyApplication.getDatabase().classListDao().getClassListById(classListChosen.getClassID());
 
+                    // ✅ Check if the class is already in the bucket list
                     for (ClassList c : bucketClassList) {
                         if (c.getClassID() == chosen.getClassID()) {
-                            new AlertDialog.Builder(getContext()).setTitle("Error").setMessage("This class is already in your bucket list").show();
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Error")
+                                    .setMessage("This class is already in your bucket list.")
+                                    .show();
+                            return;
+                        }
+                    }
+
+                    // ✅ Check if the class is already registered
+                    for (ClassList c : classListRegistered) {
+                        if (c.getClassID() == chosen.getClassID()) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Error")
+                                    .setMessage("You are already registered for this class.")
+                                    .show();
+                            return;
+                        }
+                    }
+
+                    // ✅ Check for time conflicts (overlapping time slots)
+                    for (ClassList c : bucketClassList) {
+                        if (isTimeSlotClashing(c.getTimeFrame(), chosen.getTimeFrame())) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Error")
+                                    .setMessage("Time conflict detected! You are already registered for a class during this time.")
+                                    .show();
                             return;
                         }
                     }
                     for (ClassList c : classListRegistered) {
-                        if (c.getClassID() == chosen.getClassID()) {
-                            new AlertDialog.Builder(getContext()).setTitle("Error").setMessage("This class is already in your bucket list").show();
+                        if (isTimeSlotClashing(c.getTimeFrame(), chosen.getTimeFrame())) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("Error")
+                                    .setMessage("Time conflict detected! You are already registered for a class during this time.")
+                                    .show();
                             return;
                         }
                     }
 
+                    // ✅ If no conflicts, add to bucket list
                     new AlertDialog.Builder(getContext())
                             .setTitle("Confirmation")
-                            .setMessage("Do you want to add this to your bucket list")
+                            .setMessage("Do you want to add this to your bucket list?")
                             .setPositiveButton("Yes", (dialog, which) -> {
-
                                 bucketClassList.add(chosen);
-
-
                             })
-                            .setNegativeButton("No", (dialog, which) -> {
-                                dialog.dismiss();
-                            })
+                            .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                             .show();
-
                 }
         );
+
         recyclerView.setAdapter(adapter);
 
         checkoutButton.setOnClickListener(view -> {
@@ -101,4 +130,25 @@ public class StudentFindClass extends Fragment {
 
         return viewer;
     }
+    private boolean isTimeSlotClashing(String time1, String time2) {
+        SimpleDateFormat format = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+        try {
+            // ✅ Extract start and end times
+            String[] time1Parts = time1.split("-");
+            String[] time2Parts = time2.split("-");
+
+            Date start1 = format.parse(time1Parts[0].trim());
+            Date end1 = format.parse(time1Parts[1].trim());
+            Date start2 = format.parse(time2Parts[0].trim());
+            Date end2 = format.parse(time2Parts[1].trim());
+
+            // ✅ Check if the time slots overlap
+            return (start1.before(end2) && start2.before(end1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

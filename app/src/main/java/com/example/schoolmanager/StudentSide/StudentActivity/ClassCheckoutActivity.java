@@ -82,7 +82,9 @@ public class ClassCheckoutActivity extends AppCompatActivity {
                     .setTitle("Confirmation")
                     .setMessage("Do you want to confirm the classes registered?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        StudentMainActivity.student.setRegisteredClasses(bucketClassList);
+                        for(ClassList cl : bucketClassList) {
+                            StudentMainActivity.student.addClass(cl);
+                        }
                         MyApplication.getDatabase().studentTeacherDao().updateStudent(StudentMainActivity.student);
 
                         for(ClassList cl : bucketClassList) {

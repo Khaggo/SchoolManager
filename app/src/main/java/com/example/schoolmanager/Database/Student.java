@@ -24,6 +24,10 @@ public class Student {
         this.studentPassword = studentPassword;
     }
 
+    public void addClass(ClassList classList) {
+        registeredClasses.add(classList);
+    }
+
     public String getStudentUsername() {
         return studentUsername;
     }
