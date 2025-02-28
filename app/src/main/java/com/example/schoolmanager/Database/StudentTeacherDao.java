@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 @Dao
 public interface StudentTeacherDao {
@@ -14,11 +15,27 @@ public interface StudentTeacherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertStudent(Student student);
 
+    @Update
+    void updateStudent(Student student);
+
     @Query("SELECT COUNT(*) FROM student_table WHERE studentUsername = :username")
     int checkIfUsernameExists(String username);
 
     @Query("SELECT COUNT(*) FROM student_table")
     int getStudentCount();
+
+    @Query("SELECT * FROM student_table WHERE studentID = :studentId LIMIT 1")
+    Student getStudentById(int studentId);
+
+    @Query("SELECT * FROM student_table WHERE studentUsername = :username LIMIT 1")
+    Student getStudentByUsername(String username);
+
+    // ✅ Update student name and password
+    @Query("UPDATE student_table SET studentName = :newName, studentPassword = :newPassword WHERE studentID = :studentID")
+    void updateStudentProfile(int studentID, String newName, String newPassword);
+
+
+
 
     // ✅ Insert a new teacher
     @Insert(onConflict = OnConflictStrategy.REPLACE)

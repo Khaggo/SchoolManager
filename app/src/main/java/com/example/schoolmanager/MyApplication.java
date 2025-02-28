@@ -26,7 +26,7 @@ public class MyApplication extends Application {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-
+//
 //        MyApplication.getDatabase().studentTeacherDao().insertTeacher(new Teacher(
 //                "admin",
 //                "admin",

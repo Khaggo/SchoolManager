@@ -19,4 +19,5 @@ public interface ClassListDao {
 
     @Query("SELECT * FROM class_list WHERE classID = :id")
     ClassList getClassListById(int id);
+
 }

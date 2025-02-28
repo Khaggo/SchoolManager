@@ -3,8 +3,10 @@ package com.example.schoolmanager.Database;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "class_list")
-public class ClassList {
+public class ClassList  implements Serializable {
     @PrimaryKey(autoGenerate = true)
     int classID;
     String subject;

@@ -2,6 +2,7 @@
 agp = "8.8.2"
 annotations = "23.0.0"
 annotationsVersion = "12.0"
+gson = "2.11.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -16,6 +17,7 @@ roomRuntime = "2.6.1"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 intellij-annotations = { module = "com.intellij:annotations", version.ref = "annotationsVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

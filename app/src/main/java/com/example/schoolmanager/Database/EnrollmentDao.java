@@ -19,4 +19,7 @@ public interface EnrollmentDao {
     // ✅ Get all classes a student is enrolled in
     @Query("SELECT classID FROM enrollment_table WHERE studentID = :studentID")
     List<Integer> getEnrolledClasses(int studentID);
+
+    @Query("SELECT * FROM student_table WHERE studentID IN (SELECT studentID FROM enrollment_table WHERE classID = :classID)")
+    List<Student> getStudentsInClass(int classID);
 }

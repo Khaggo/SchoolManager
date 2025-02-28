@@ -20,7 +20,7 @@ public class classContainerAdapter extends RecyclerView.Adapter<classContainerAd
     private OnCardClickListener onCardClickListener;
 
     public interface OnCardClickListener {
-        void onCardClick(int position);
+        void onCardClick(ClassList classList);
     }
 
     public classContainerAdapter(List<ClassList> classLists, OnCardClickListener onCardClickListener) {
@@ -48,7 +48,7 @@ public class classContainerAdapter extends RecyclerView.Adapter<classContainerAd
         // Handle click events safely
         holder.cardView.setOnClickListener(v -> {
             if (onCardClickListener != null) {
-                onCardClickListener.onCardClick(classList.getClassID());
+                onCardClickListener.onCardClick(classList);
             }
         });
     }

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.schoolmanager.Database.SeatDao;
 import com.example.schoolmanager.Database.SeatingArrangement;
-import com.example.schoolmanager.Database.Student;
 import com.example.schoolmanager.R;
 
 import java.util.List;
@@ -22,13 +21,17 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     private List<SeatingArrangement> seatList;
     private Context context;
     private SeatDao seatDao;
-    private SeatDao studentDao;
+    private OnSeatClickListener onSeatClickListener;
 
-    public SeatAdapter(List<SeatingArrangement> seatList, Context context, SeatDao seatDao, SeatDao studentDao) {
+    public interface OnSeatClickListener {
+        void onSeatClick(SeatingArrangement seat);
+    }
+
+    public SeatAdapter(List<SeatingArrangement> seatList, Context context, SeatDao seatDao, OnSeatClickListener onSeatClickListener) {
         this.seatList = seatList;
         this.context = context;
         this.seatDao = seatDao;
-        this.studentDao = studentDao;
+        this.onSeatClickListener = onSeatClickListener;
     }
 
     @NonNull
@@ -41,19 +44,31 @@ public class SeatAdapter extends RecyclerView.Adapter<SeatAdapter.SeatViewHolder
     @Override
     public void onBindViewHolder(@NonNull SeatViewHolder holder, int position) {
         SeatingArrangement seat = seatList.get(position);
-        holder.seatButton.setText("Seat " + seat.getSeatNumber());
 
         if (seat.getStudentID() != null) {
-            // Fetch student details
-            Student student = studentDao.getStudentById(seat.getStudentID());
-            holder.seatButton.setText(student.getStudentName());
-            holder.seatButton.setBackgroundColor(Color.BLUE);
+            holder.seatButton.setBackgroundColor(Color.RED);
+            holder.seatButton.setText("Occupied");
         } else {
             holder.seatButton.setBackgroundColor(Color.GREEN);
+            holder.seatButton.setText("Available");
         }
 
-        holder.seatButton.setOnClickListener(v -> {
+        holder.seatButton.setOnClickListener(v -> onSeatClickListener.onSeatClick(seat));
 
+        holder.seatButton.setOnLongClickListener(v -> {
+            if (seat.getStudentID() != null) {
+                new android.app.AlertDialog.Builder(context)
+                        .setTitle("Remove Student")
+                        .setMessage("Do you want to remove the student from this seat?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            seat.setStudentID(null);
+                            seatDao.updateSeat(seat);
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            }
+            return true;
         });
     }
 

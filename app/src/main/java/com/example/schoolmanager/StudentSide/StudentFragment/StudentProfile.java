@@ -1,66 +1,83 @@
 package com.example.schoolmanager.StudentSide.StudentFragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
+import com.example.schoolmanager.Database.AppDatabase;
+import com.example.schoolmanager.Database.Student;
+import com.example.schoolmanager.MyApplication;
 import com.example.schoolmanager.R;
+import com.example.schoolmanager.StudentSide.StudentMainActivity;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StudentProfile#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class StudentProfile extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private EditText nameEditText, studentNumberEditText, usernameEditText, passwordEditText;
+    private Button saveButton;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public StudentProfile() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment StudentProfile.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StudentProfile newInstance(String param1, String param2) {
-        StudentProfile fragment = new StudentProfile();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private int loggedInStudentID =StudentMainActivity.student.getStudentID(); // Replace with actual logged-in student ID
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_student_profile, container, false);
+
+        // Initialize Views
+        nameEditText = view.findViewById(R.id.profile_name);
+        studentNumberEditText = view.findViewById(R.id.profile_student_number);
+        usernameEditText = view.findViewById(R.id.profile_username);
+        passwordEditText = view.findViewById(R.id.profile_password);
+        saveButton = view.findViewById(R.id.profile_save_button);
+
+        // Get database instance
+
+
+        // Load Student Data
+        loadStudentData();
+
+        // Save Button Click Listener
+        saveButton.setOnClickListener(v -> saveChanges());
+
+        return view;
+    }
+
+    private void loadStudentData() {
+        // Fetch student from database
+        Student student = StudentMainActivity.student;
+
+        if (student != null) {
+            nameEditText.setText(student.getStudentName());
+            studentNumberEditText.setText(String.valueOf(student.getStudentNumber()));
+            usernameEditText.setText(student.getStudentUsername());
+            passwordEditText.setText(student.getStudentPassword());
+        } else {
+            Toast.makeText(getContext(), "Error: Student not found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveChanges() {
+        String newName = nameEditText.getText().toString().trim();
+        String newPassword = passwordEditText.getText().toString().trim();
+
+        // Validation
+        if (newName.isEmpty() || newPassword.isEmpty()) {
+            Toast.makeText(getContext(), "Name and password cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (newPassword.length() < 8) {
+            Toast.makeText(getContext(), "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update database
+        MyApplication.getDatabase().studentTeacherDao().updateStudentProfile(loggedInStudentID, newName, newPassword);
+        Toast.makeText(getContext(), "Profile updated successfully!", Toast.LENGTH_SHORT).show();
     }
 }

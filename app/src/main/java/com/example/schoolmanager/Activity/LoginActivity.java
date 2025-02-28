@@ -74,9 +74,10 @@ public class LoginActivity extends AppCompatActivity {
         if (isStudent) {
             if (MyApplication.getDatabase().studentTeacherDao().checkStudentLogin(username, password) > 0) {
                 showToast("Login Successful as Student!");
-                   Intent intent = new Intent(LoginActivity.this, StudentMainActivity.class);
-                    startActivity(intent);
-                     finish();
+                Intent intent = new Intent(LoginActivity.this, StudentMainActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+                finish();
             } else {
                 showToast("Invalid Student Credentials!");
             }

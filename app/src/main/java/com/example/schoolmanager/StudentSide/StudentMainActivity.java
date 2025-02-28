@@ -13,8 +13,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.schoolmanager.Activity.LoginActivity;
+import com.example.schoolmanager.Database.Student;
+import com.example.schoolmanager.Database.Teacher;
 import com.example.schoolmanager.Fragments.ClassListFragment;
 import com.example.schoolmanager.Fragments.CreateClassFragment;
+import com.example.schoolmanager.MainActivity;
 import com.example.schoolmanager.MyApplication;
 import com.example.schoolmanager.R;
 import com.example.schoolmanager.StudentSide.StudentFragment.StudentClassList;
@@ -24,11 +27,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StudentMainActivity extends AppCompatActivity {
 
+    public static StudentMainActivity instance;
+
+
+    public static Student student;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_student_main);
+        instance = this;
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -37,6 +46,7 @@ public class StudentMainActivity extends AppCompatActivity {
                         .setTitle("Confirmation")
                         .setMessage("Do you want to log out?")
                         .setPositiveButton("Yes", (dialog, which) -> {
+                            student = null;
                             Intent intent = new Intent(StudentMainActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
@@ -70,5 +80,14 @@ public class StudentMainActivity extends AppCompatActivity {
             return false;
 
         });
+
+        student = MyApplication.getDatabase().studentTeacherDao().getStudentByUsername(getIntent().getStringExtra("username"));
+    }
+    public static StudentMainActivity getInstance() {
+        return instance;
+    }
+
+    public static Student getTeacher() {
+        return student;
     }
 }

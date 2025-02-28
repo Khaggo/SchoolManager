@@ -3,6 +3,8 @@ package com.example.schoolmanager.Database;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
+
 @Entity(tableName = "student_table")
 public class Student {
 
@@ -13,11 +15,29 @@ public class Student {
     int studentNumber;
     String studentPassword;
 
+    List<ClassList> registeredClasses;
+
     public Student(String studentName, String studentUsername, int studentNumber, String studentPassword) {
         this.studentName = studentName;
         this.studentUsername = studentUsername;
         this.studentNumber = studentNumber;
         this.studentPassword = studentPassword;
+    }
+
+    public String getStudentUsername() {
+        return studentUsername;
+    }
+
+    public void setStudentUsername(String studentUsername) {
+        this.studentUsername = studentUsername;
+    }
+
+    public List<ClassList> getRegisteredClasses() {
+        return registeredClasses;
+    }
+
+    public void setRegisteredClasses(List<ClassList> registeredClasses) {
+        this.registeredClasses = registeredClasses;
     }
 
     public int getStudentID() {

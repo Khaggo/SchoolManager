@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.schoolmanager.Activity.ViewClassroomActivity;
 import com.example.schoolmanager.Adapter.classContainerAdapter;
 import com.example.schoolmanager.Database.ClassList;
+import com.example.schoolmanager.Database.SeatingArrangement;
 import com.example.schoolmanager.MyApplication;
 import com.example.schoolmanager.R;
 
@@ -35,8 +36,10 @@ public class ClassListFragment extends Fragment {
 
         classContainerAdapter adapter = new classContainerAdapter(
                 classList,
-                (int position) -> {
-
+                (classListChosen) -> {
+                    Intent intent = new Intent(getContext(), ViewClassroomActivity.class);
+                    intent.putExtra("class_id", classListChosen.getClassID());
+                    startActivity(intent);
                 }
         );
 
