@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Create Class " />
 
+
     <AutoCompleteTextView
         android:id="@+id/create_class_subject_text_field"
         android:layout_width="match_parent"
@@ -54,7 +55,7 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+             />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,7 +75,7 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+             />
     </LinearLayout>
 
     <Button

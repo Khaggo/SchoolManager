@@ -10,9 +10,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.schoolmanager.Database.ClassList;
+import com.example.schoolmanager.Database.Teacher;
+import com.example.schoolmanager.MainActivity;
+import com.example.schoolmanager.MyApplication;
 import com.example.schoolmanager.R;
 
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ public class CreateClassFragment extends Fragment {
 
     private String selectedDayOfWeek = "";
     private int startHour, startMinute, endHour, endMinute;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,13 +62,51 @@ public class CreateClassFragment extends Fragment {
 
         subjectTextField.setOnClickListener(v -> subjectTextField.showDropDown());
         roomTextField.setOnClickListener(v -> roomTextField.showDropDown());
-
+        saveButton.setOnClickListener(v -> saveClassDetails());
 
 
 
 
         return viewer;
 
+    }
+
+    private void saveClassDetails() {
+        String subject = subjectTextField.getText().toString().trim();
+        String room = roomTextField.getText().toString().trim();
+        String dayOfWeek = selectedDayOfWeek;
+        String time = timeTextView.getText().toString().trim();
+
+        if (subject.isEmpty() || room.isEmpty() || dayOfWeek.isEmpty() || time.isEmpty()) {
+            Toast.makeText(getActivity(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        } else {
+
+
+
+            ClassList classList = new ClassList(
+                    subject,
+                    MainActivity.getTeacher().getTeacherName(),
+                    room,
+                    dayOfWeek,
+                    time
+            );
+            MyApplication.getDatabase().classListDao().insertClassList(classList);
+
+            // Navigate to CLRMFrag
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.main_frame_container, new ClassListFragment())
+                    .addToBackStack(null)
+                    .commit();
+
+            // Clear the fields
+            subjectTextField.setText("");
+            roomTextField.setText("");
+            dateTextView.setText("Day of Week: ");
+            timeTextView.setText("Time: ");
+
+
+            Toast.makeText(getActivity(), "Class saved!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showDayOfWeekPicker() {
@@ -126,6 +170,7 @@ public class CreateClassFragment extends Fragment {
 
         return String.format("%02d:%02d %s", formattedHour, minute, period);
     }
+
 
     private void setupSubjectAutoComplete() {
         List<String> subjects = new ArrayList<>();
